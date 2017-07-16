@@ -45,6 +45,6 @@ public class Bookmarkmanage {
         	cookies = cookieTemp;
         }
         int responseCode = conn.getResponseCode();
-        System.out.println("[Bookmarkmanage-"+message+"] POST 시도 중... 코드:"+responseCode);
+        System.out.println("[Bookmarkmanage-"+message+"] POST 시도 중... URL: "+surl+"코드:"+responseCode);
 	}
 }
