@@ -20,16 +20,23 @@ import java.util.regex.Pattern;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 public class LaunchData {
 	
+	Bookmarkmanage bm;
 	ArrayList<String> clearlist;
 	ArrayList<Vector<String>> mapdata;
 	boolean refreshcancel,refreshdone;
 	JFrame jf;
 	JLabel jl;
+	JTextField id;
+	JPasswordField pw;
+	JPanel jp;
+	public LaunchWebServers lwss;
 	
 	public LaunchData() {
 		try {
@@ -38,11 +45,12 @@ public class LaunchData {
 			this.clearlist = new ArrayList<String>();
 		}
 		refreshcancel = false;
-		new LaunchWebServers(this);
+		this.lwss = new LaunchWebServers(this);
+		bm = new Bookmarkmanage(this);
 		jf = new JFrame("NSMM - 귀챠니즘 v."+Execute.version);
 		jf.setSize(200, 150);
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setcenter(jf);jf.setLayout(new GridLayout(3, 1));
+		setcenter(jf);jf.setLayout(new GridLayout(4, 1));
 		jl = new JLabel("Loading...", SwingConstants.CENTER);
 		jf.add(jl);
 		JLabel jl2 = new JLabel("아래의 주소를 입력해 주세요.", SwingConstants.CENTER);
@@ -76,6 +84,12 @@ public class LaunchData {
 		});
 		jtf.setEditable(false);
 		jf.add(jtf);
+		jp = new JPanel();
+		jp.setLayout(new GridLayout(1, 2));
+		id = new JTextField("아이디");
+		pw = new JPasswordField("비밀번호");
+		jp.add(id);jp.add(pw);
+		jf.add(jp);
 		jf.setResizable(false);
 		jf.setVisible(true);
 		try {
@@ -127,7 +141,7 @@ public class LaunchData {
 						if(LzURLUtils.checkValid("https://supermariomakerbookmark.nintendo.net/courses/"+newcode)){
 							Vector<String> data = new Vector<String>();
 							data.addElement(title);data.addElement(author);data.addElement(newcode);data.addElement(s3);
-							Thread t = new Thread(new getPercent(this, newcode, data));
+							Thread t = new Thread(new getPercent(this, newcode, data, this.lwss));
 							t.run();
 						}
 					}
@@ -181,9 +195,11 @@ public class LaunchData {
 		String data;
 		Vector<String> vector;
 		int rowCount;
-		public getPercent(LaunchData launchData, String code, Vector<String> vector){
+		LaunchWebServers lwss;
+		public getPercent(LaunchData launchData, String code, Vector<String> vector, LaunchWebServers lwss){
 			this.data = code;
 			this.vector = vector;
+			this.lwss = lwss;
 		}
 		@Override
 		public void run() {
@@ -206,7 +222,9 @@ public class LaunchData {
 				vector.add(diff);
 				String percent = findpercent(smmcontent);
 				vector.addElement(percent);
-				if(!refreshcancel){mapdata.add(vector);}
+				if(!refreshcancel){
+					mapdata.add(vector);
+					}
 			} catch (Exception e) {
 			}
 		}
