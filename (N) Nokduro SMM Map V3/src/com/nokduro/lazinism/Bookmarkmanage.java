@@ -24,7 +24,7 @@ public class Bookmarkmanage {
 	public void addMap(String mapcode) throws IOException{
         String courseURL = "https://supermariomakerbookmark.nintendo.net/courses/"+mapcode;
         String bookmarkURL = courseURL + "/play_at_later";
-        postURL(bookmarkURL, "","BOOKMARK");
+        postURL(bookmarkURL, "BOOKMARK");
 	}
 	public void postURL(String surl, String param, String message) throws IOException{
 		URL url = new URL(surl);
@@ -40,6 +40,21 @@ public class Bookmarkmanage {
 		wr.writeBytes(param);
 		wr.flush();
 		wr.close();
+		String cookieTemp = conn.getHeaderField("Set-Cookie");
+        if(cookieTemp != null){
+        	cookies = cookieTemp;
+        }
+        int responseCode = conn.getResponseCode();
+        System.out.println("[Bookmarkmanage-"+message+"] POST 시도 중... URL: "+surl+" 코드:"+responseCode);
+	}
+	public void postURL(String surl, String message) throws IOException{
+		URL url = new URL(surl);
+		HttpsURLConnection conn =  (HttpsURLConnection)url.openConnection();
+		conn.setRequestMethod("POST");
+		conn.setUseCaches(false);
+        if (cookies != null) {
+        	conn.addRequestProperty("Cookie", cookies);
+        }
 		String cookieTemp = conn.getHeaderField("Set-Cookie");
         if(cookieTemp != null){
         	cookies = cookieTemp;
